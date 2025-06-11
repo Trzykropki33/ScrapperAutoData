@@ -1,0 +1,26 @@
+Modyfikacja (Silnik)
+Architektura agregatu
+Typ nadwozia
+Zużycia paliwa, mieszany (WLTP)
+Emisje CO2 (WLTP)
+Przyspieszenie 0 - 62 mph
+Przyspieszenie 0 - 60 mph (Obliczone przez Auto-Data.net)
+Stosunek masy do mocy
+Stosunek masy do Moment obrotowy
+Moc na litr objętości roboczej
+Moment obrotowy
+Układ silnika
+Konfiguracja silnika
+Stopień sprężania
+Układ wtrysku paliwa
+Aspiracja silnika
+Ilość oleju w silniku
+Specyfikacja oleju silnikowego
+płyn chłodzący
+Układy silnika
+Dopuszczalna masa
+Współczynnik oporu powietrza (Cx)
+Minimalna średnica skrętu
+Architektura układu napędowego
+Systemy wspomagające
+Wspomaganie kierownicy

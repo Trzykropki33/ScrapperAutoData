@@ -1,0 +1,146 @@
+Generacja
+Marka
+Model
+Link
+Liczba miejsc
+Liczba drzwi
+null
+null
+Długość
+Szerokość
+Szerokość ze rozłożonymi lusterkami
+Wysokość
+Rozstaw osi
+Rozstaw kół przednich
+Rozstaw kół tylnych
+null
+null
+null
+null
+null
+null
+null
+null
+null
+null
+null
+null
+null
+null
+null
+null
+null
+null
+null
+null
+null
+null
+null
+null
+null
+null
+null
+null
+null
+null
+null
+null
+null
+null
+null
+null
+null
+Minimalna pojemność bagażnika
+null
+null
+null
+null
+null
+null
+null
+null
+null
+null
+null
+null
+null
+Dopuszczalna masa ładunku na dachu
+null
+null
+[Początek produkcji Koniec produkcji]
+Pojemność silnika
+Typ paliwa
+Moc
+null
+null
+null
+null
+null
+null
+null
+null
+Liczba cylindrów
+null
+Liczba zaworów cylindra
+null
+null
+null
+null
+[Średnica cylindrów x Skok tłoka]
+Układ kierowniczy
+null
+null
+Rozmiar opon
+null
+Rozmiar felg
+null
+null
+Hamulce przednie
+Hamulce tylne
+null
+null
+null
+null
+null
+null
+Zawieszenie przednie
+Zawieszenie tylne
+null
+[ Ilość biegów i rodzaj skrzyni biegów ]
+null
+[ Ilość biegów i rodzaj skrzyni biegów ]
+Napęd
+null
+Prędkość maksymalna
+Przyspieszenie 0 - 100 km/h
+brak
+brak
+Zużycie paliwa - Cykl mieszany
+Zużycie paliwa - Cykl pozamiejski
+Zużycie paliwa - Cykl miejski
+brak
+brak
+brak
+brak
+brak
+brak
+brak
+brak
+brak
+brak
+brak
+Zbiornik paliwa
+brak
+brak
+brak
+Emisje CO2
+Standard ekologiczny
+Masa własna
+Maksymalne obciążenie
+brak
+brak
+brak
+brak
+brak
+brak
+[Model/Kod silnika]
