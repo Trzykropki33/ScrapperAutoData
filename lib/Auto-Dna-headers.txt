@@ -1,0 +1,155 @@
+ Marka
+ Model
+ Generacja
+ Modyfikacja (Silnik)
+ Początek produkcji
+ Koniec produkcji
+ Architektura agregatu
+ Typ nadwozia
+ Liczba miejsc
+ Liczba drzwi
+ Zużycie paliwa - Cykl miejski
+ Zużycie
+ paliwa - Cykl pozamiejski
+ Zużycie paliwa - Cykl mieszany
+ Typ paliwa
+ Standard ekologiczny
+ Stosunek masy do mocy
+ Stosunek masy do Moment obrotowy
+ Moc
+ Moc na litr objętości roboczej
+ Moment obrotowy
+ Układ silnika
+ Model/Kod silnika
+ Pojemność silnika
+ Liczba cylindrów
+ Konfiguracja silnika
+ Średnica cylindrów
+ Skok tłoka
+ Stopień sprężania
+ Liczba zaworów cylindra
+ Układ wtrysku paliwa
+ Aspiracja silnika
+ Układ rozrządu
+ Ilość oleju w silniku
+ Specyfikacja oleju silnikowego
+ płyn chłodzący
+ Masa własna
+ Zbiornik paliwa
+ Dopuszczalna masa całkowita przyczepy z hamulcami przy ruszaniu na wzniesieniu o nachyleniu 12%
+ Długość
+ Szerokość
+ Wysokość
+ Rozstaw osi
+ Rozstaw kół przednich
+ Rozstaw kół tylnych
+ Prześwit
+ Minimalna średnica skrętu
+ Architektura układu napędowego
+ Napęd
+ Ilość biegów i rodzaj skrzyni biegów
+ Zawieszenie przednie
+ Zawieszenie tylne
+ Hamulce przednie
+ Hamulce tylne
+ Systemy wspomagające
+ Układ kierowniczy
+ Wspomaganie kierownicy
+ Rozmiar opon
+ Rozmiar felg
+ Link
+ Układy silnika
+ Minimalna pojemność bagażnika
+ Maksymalna pojemność bagażnika
+ Kąt natarcia
+ Kąt zejścia
+ Technologia baterii
+ Moc maksymalna Silnik elektryczny
+ Moment obrotowy Silnik elektryczny
+ Lokalizacja silnika elektrycznego
+ Moc systemu
+ Moment obrotowy systemu
+ Przyspieszenie 0 - 100 km/h
+ Przyspieszenie 0 - 62 mph
+ Przyspieszenie 0 - 60 mph (Obliczone przez Auto-Data.net)
+ Prędkość maksymalna
+ Pojemność brutto akumulatora
+ Typ silnika elektrycznego
+ Szerokość ze złożonymi lusterkami
+ Szerokość ze rozłożonymi lusterkami
+ Przyspieszenie 0 - 60 mph
+ Maksymalną prędkość obrotową silnika
+ Dopuszczalna masa
+ Maksymalne obciążenie
+ Współczynnik oporu powietrza (Cx)
+ Zużycie paliwa - Cykl mieszany (NEDC)
+ Lokalizacja baterii
+ Zasięg w trybie elektrycznym (CLTC)
+ Średnie zużycie energii (CLTC)
+ Porty ładowania
+ Emisje CO2
+ zwis przedni
+ zwis tylny
+ Emisje CO2 (WLTP)
+ 100 km/h - 0
+ Dopuszczalna masa ładunku na dachu
+ zbiornik AdBlue
+ Dopuszczalna masa całkowita przyczepy bez hamulców
+ Dopuszczalny nacisk przyczepy na hak holowniczy
+ Zużycia paliwa niska prędkość (WLTP)
+ Zużycia paliwa wysoka prędkość (WLTP)
+ Zużycia paliwa mieszany (WLTP)
+ Dopuszczalna masa całkowita przyczepy z hamulcami przy ruszaniu na wzniesieniu o nachyleniu 8%
+ Zużycie paliwa - Cykl miejski (NEDC
+ WLTP odpowiednik)
+ Zużycie paliwa - Cykl pozamiejski (NEDC WLTP odpowiednik)
+ Zużycie paliwa - Cykl mieszany (NEDC WLTP odpowiednik)
+ Emisje CO2 (NEDC WLTP odpowiednik)
+ Przyspieszenie 0 - 200 km/h
+ Napięcie baterii
+ Zużycie paliwa - Cykl miejski (NEDC)
+ Zużycie paliwa - Cykl pozamiejski (NEDC)
+ Emisje CO2 (NEDC)
+ Zasięg w trybie elektrycznym (WLTP)
+ Zużycia
+ paliwa
+ średnia prędkość (WLTP)
+ Zużycia paliwa
+ bardzo wysoka prędkość (WLTP)
+ kąt rampowy
+ głębokość brodzenia
+ Maksymalne obroty silnika elektrycznego
+ Waga baterii
+ Moc podczas regeneracji
+ Zasięg w trybie elektrycznym (NEDC)
+ Średnie zużycie energii (NEDC)
+ Maksymalna szybkość (jedynie napędzane elektrycznie)
+ Zużycia paliwa niska prędkość (WLTP) (CNG)
+ Zużycia paliwa średnia prędkość (WLTP) (CNG)
+ Zużycia paliwa wysoka prędkość (WLTP) (CNG)
+ Zużycia paliwa bardzo wysoka prędkość (WLTP) (CNG)
+ Zużycia paliwa mieszany (WLTP) (CNG)
+ Zużycie paliwa - Cykl miejski (CNG) (NEDC)
+ Zużycie paliwa - Cykl pozamiejski (CNG) (NEDC)
+ Zużycie paliwa - Cykl mieszany (CNG) (NEDC)
+ Pojemność baku - CNG
+ Zużycie paliwa - Cykl miejski (EPA)
+ Zużycie paliwa - Cykl pozamiejski (EPA)
+ Zużycie paliwa - Cykl mieszany (EPA)
+ Zużycie paliwa - Cykl miejski (CNG)
+ Zużycie paliwa - Cykl pozamiejski (CNG)
+ Zużycie paliwa - Cykl mieszany (CNG)
+ Emisje CO2 (CNG)
+ Pojemność netto (użytkowa) akumulatora
+ Średnie zużycie energii (WLTP)
+ Średnie zużycie energii
+ Zasięg w trybie elektrycznym
+ Zasięg w trybie elektrycznym (NEDC WLTP odpowiednik)
+ Średnie zużycie energii (NEDC WLTP odpowiednik)
+ kąt wznoszenia
+ Model/kod silnika elektrycznego
+ Zużycie paliwa - Cykl mieszany (WLTC)
+ Przyspieszenie 0 - 300 km/h
+ Zużycie paliwa - Cykl mieszany (CLTC)
+ Zasięg w trybie elektrycznym (WLTC)
+ Średnie zużycie energii (WLTC)

@@ -1,0 +1,149 @@
+ null
+ Marka
+ Model
+ Link
+ Liczba drzwi
+ Liczba miejsc
+ null
+ Minimalna średnica skrętu
+ Długość
+ Szerokość
+ Szerokość ze rozłożonymi lusterkami
+ Wysokość
+ Rozstaw osi
+ Rozstaw kół przednich
+ Rozstaw kół tylnych
+ zwis przedni
+ zwis tylny
+ Prześwit
+ null
+ Szerokość ze złożonymi lusterkami
+ null
+ null
+ null
+ null
+ null
+ null
+ Prześwit
+ null
+ null
+ null
+ null
+ null
+ null
+ null
+ null
+ null
+ null
+ null
+ null
+ null
+ null
+ null
+ null
+ null
+ null
+ null
+ null
+ null
+ null
+ null
+ null
+ Maksymalna pojemność bagażnika
+ Minimalna pojemność bagażnika
+ null
+ null
+ null
+ null
+ null
+ null
+ Kąt natarcia
+ kąt rampowy
+ Kąt zejścia
+ null
+ null
+ głębokość brodzenia
+ null
+ Dopuszczalna masa ładunku na dachu
+ null
+ null
+ [Początek produkcji x Koniec produkcji]
+ null
+ Układ silnika
+ null
+ Moment obrotowy
+ null
+ null
+ null
+ Moment obrotowy Silnik elektryczny
+ null
+ Porty ładowania
+ Układ rozrządu
+ Liczba cylindrów
+ null
+ Liczba zaworów cylindra
+ Stopień sprężania
+ null
+ Układ wtrysku paliwa
+ null
+ Średnica cylindrów
+ null
+ null
+ Układ kierowniczy
+ Rozmiar opon
+ Rozmiar opon
+ Rozmiar felg
+ Rozmiar felg
+ null
+ Hamulce przednie
+ Hamulce tylne
+ 100 km/h - 0
+ null
+ null
+ null
+ null
+ null
+ Zawieszenie przednie
+ Zawieszenie tylne
+ null
+ Ilość biegów i rodzaj skrzyni biegów
+ null
+ Ilość biegów i rodzaj skrzyni biegów
+ Napęd
+ null
+ Prędkość maksymalna
+ Przyspieszenie 0 - 100 km/h
+ null
+ null
+ Zużycie paliwa - Cykl mieszany
+ null
+ null
+ Pojemność brutto akumulatora
+ null
+ null
+ null
+ null
+ Średnie zużycie energii
+ null
+ null
+ null
+ null
+ null
+ null
+ null
+ null
+ Zbiornik paliwa
+ null
+ null
+ null
+ Emisje CO2
+ Standard ekologiczny
+ Masa własna
+ Maksymalne obciążenie
+ null
+ Dopuszczalna masa całkowita przyczepy bez hamulców
+ Dopuszczalna masa całkowita przyczepy z hamulcami przy ruszaniu na wzniesieniu o nachyleniu 12%
+ Pojemność brutto akumulatora
+ null
+ null
+ [Model/Kod silnika]

@@ -23,6 +23,7 @@ GEM
     rack (3.1.16)
     redis-client (0.24.0)
       connection_pool
+    set (1.0.3)
     sidekiq (8.0.3)
       connection_pool (>= 2.5.0)
       json (>= 2.9.0)
@@ -44,6 +45,7 @@ DEPENDENCIES
   nokogiri
   open-uri
   prawn
+  set
   sidekiq
 
 BUNDLED WITH

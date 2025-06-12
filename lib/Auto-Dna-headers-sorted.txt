@@ -1,0 +1,159 @@
+ brak
+ Marka
+ Model
+ Link
+ Liczba drzwi
+ Liczba miejsc
+ brak
+ brak
+ Długość
+ Szerokość
+ brak
+ Wysokość
+ Rozstaw osi
+ Rozstaw kół przednich
+ Rozstaw kół tylnych
+ zwis przedni
+ zwis tylny
+ Prześwit
+ brak
+ Szerokość ze złożonymi lusterkami
+ Generacja
+
+
+
+ Średnica cylindrów
+ Minimalna średnica skrętu
+
+
+ Dopuszczalna masa całkowita przyczepy z hamulcami przy ruszaniu na wzniesieniu o nachyleniu 12%
+ Szerokość ze rozłożonymi lusterkami
+ Dopuszczalna masa całkowita przyczepy z hamulcami przy ruszaniu na wzniesieniu o nachyleniu 8%
+ Modyfikacja (Silnik)
+ Początek produkcji
+ Koniec produkcji
+ Minimalna pojemność bagażnika
+ Układ silnika
+ Architektura agregatu
+ Wspomaganie kierownicy
+ Typ nadwozia
+ Model/Kod silnika
+ Stosunek masy do mocy
+ Zużycie paliwa - Cykl miejski
+ Zużycie
+ paliwa - Cykl pozamiejski
+ Ilość biegów i
+ Stosunek masy do Moment obrotowy
+ Zużycie paliwa - Cykl mieszany
+ Typ paliwa
+ Standard ekologiczny
+ Moc
+ Moc na litr objętości roboczej
+ Dopuszczalna masa ładunku na dachu
+ Dopuszczalny nacisk przyczepy na hak holowniczy
+ Przyspieszenie 0 - 100 km/h
+ Przyspieszenie 0 - 62 mph
+ Przyspieszenie 0 - 60 mph (Obliczone przez Auto-Data.net)
+ Przyspieszenie 0 - 60 mph
+ Moment obrotowy
+ Dopuszczalna masa całkowita przyczepy bez hamulców
+ Pojemność silnika
+ Liczba cylindrów
+ Maksymalna pojemność bagażnika
+ Pojemność brutto akumulatora
+ Konfiguracja silnika
+ Skok tłoka
+ Stopień sprężania
+ Liczba zaworów cylindra
+ Układ wtrysku paliwa
+ Aspiracja silnika
+ Kąt natarcia
+ kąt rampowy
+ Kąt zejścia
+ kąt wznoszenia
+ Układ rozrządu
+ głębokość brodzenia
+ Moc maksymalna Silnik elektryczny
+ Maksymalne obciążenie
+ Ilość oleju w silniku
+ Specyfikacja oleju silnikowego
+ płyn chłodzący
+ Pojemność baku - CNG
+ Typ silnika elektrycznego
+ Układy silnika
+ Moment obrotowy Silnik elektryczny
+ Lokalizacja silnika elektrycznego
+ Moment obrotowy systemu
+ Moc systemu
+ Masa własna
+ Maksymalną prędkość obrotową silnika
+ Zbiornik paliwa
+ Architektura układu napędowego
+ Napęd
+ Układ kierowniczy
+ rodzaj skrzyni biegów
+ Zawieszenie przednie
+ Zawieszenie tylne
+ Hamulce przednie
+ Hamulce tylne
+ Systemy wspomagające
+ Rozmiar opon
+ Rozmiar felg
+ Technologia baterii
+ Prędkość maksymalna
+ Dopuszczalna masa
+ Współczynnik oporu powietrza (Cx)
+ Zużycie paliwa - Cykl mieszany (NEDC)
+ Lokalizacja baterii
+ Zasięg w trybie elektrycznym (CLTC)
+ Średnie zużycie energii (CLTC)
+ Porty ładowania
+ Emisje CO2
+ Emisje CO2 (WLTP)
+ 100 km/h - 0
+ zbiornik AdBlue
+ Zużycia paliwa niska prędkość (WLTP)
+ Zużycia paliwa wysoka prędkość (WLTP)
+ Zużycia paliwa mieszany (WLTP)
+ Zużycie paliwa - Cykl miejski (NEDC
+ WLTP odpowiednik)
+ Zużycie paliwa - Cykl pozamiejski (NEDC WLTP odpowiednik)
+ Zużycie paliwa - Cykl mieszany (NEDC WLTP odpowiednik)
+ Emisje CO2 (NEDC WLTP odpowiednik)
+ Przyspieszenie 0 - 200 km/h
+ średnia prędkość (WLTP)
+ Przyspieszenie 0 - 300 km/h
+ Napięcie baterii
+ Zużycie paliwa - Cykl miejski (NEDC)
+ Średnie zużycie energii (NEDC)
+ Zużycie paliwa - Cykl pozamiejski (NEDC)
+ Zasięg w trybie elektrycznym (WLTP)
+ Pojemność netto (użytkowa) akumulatora
+ Emisje CO2 (NEDC)
+ Zużycia
+ paliwa
+ Zużycia paliwa
+ Średnie zużycie energii (WLTP)
+ Zasięg w trybie elektrycznym (NEDC)
+ Zasięg w trybie elektrycznym
+ Zasięg w trybie elektrycznym (NEDC WLTP odpowiednik)
+ Moc podczas regeneracji
+ Maksymalna szybkość (jedynie napędzane elektrycznie)
+ bardzo wysoka prędkość (WLTP)
+ Maksymalne obroty silnika elektrycznego
+ Waga baterii
+ Zużycia paliwa niska prędkość (WLTP) (CNG)
+ Zasięg w trybie elektrycznym (WLTC)
+ Zużycia paliwa średnia prędkość (WLTP) (CNG)
+ Zużycia paliwa wysoka prędkość (WLTP) (CNG)
+ Zużycia paliwa bardzo wysoka prędkość (WLTP) (CNG)
+ Zużycia paliwa mieszany (WLTP) (CNG)
+ Zużycie paliwa - Cykl miejski (CNG) (NEDC)
+ Zużycie paliwa - Cykl pozamiejski (CNG) (NEDC)
+ Zużycie paliwa - Cykl mieszany (CNG) (NEDC)
+ Zużycie paliwa - Cykl miejski (EPA)
+ Zużycie paliwa - Cykl pozamiejski (EPA)
+ Zużycie paliwa - Cykl mieszany (EPA)
+ Zużycie paliwa - Cykl miejski (CNG)
+ Zużycie paliwa - Cykl pozamiejski (CNG)
+ Model/kod silnika elektrycznego
