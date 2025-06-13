@@ -1,26 +1,27 @@
-Modyfikacja (Silnik)
-Architektura agregatu
-Typ nadwozia
-Zużycia paliwa, mieszany (WLTP)
-Emisje CO2 (WLTP)
-Przyspieszenie 0 - 62 mph
-Przyspieszenie 0 - 60 mph (Obliczone przez Auto-Data.net)
-Stosunek masy do mocy
-Stosunek masy do Moment obrotowy
-Moc na litr objętości roboczej
-Moment obrotowy
-Układ silnika
-Konfiguracja silnika
-Stopień sprężania
-Układ wtrysku paliwa
-Aspiracja silnika
-Ilość oleju w silniku
-Specyfikacja oleju silnikowego
-płyn chłodzący
-Układy silnika
-Dopuszczalna masa
-Współczynnik oporu powietrza (Cx)
-Minimalna średnica skrętu
-Architektura układu napędowego
-Systemy wspomagające
-Wspomaganie kierownicy
+if ["Długość", "Szerokość", "Wysokość", "Rozstaw osi","Szerokość ze rozłożonymi lusterkami", "Rozstaw kół przednich", "Rozstaw kół tylnych", "zwis przedni", "zwis tylny", "Układ silnika","Średnica cylindrów","Prześwit", "Szerokość ze złożonymi lusterkami", ].include?(key)
+          value = extract_first_known_value(value)
+        end
+
+        if ["Minimalna średnica skrętu"].include?(key)
+          value = extract_first_known_value(value)
+        end
+
+        if ["Minimalna pojemność bagażnika","Zbiornik paliwa","Maksymalna pojemność bagażnika"].include?(key)
+          value = extract_first_known_value(value)
+        end
+
+        if ["Dopuszczalna masa ładunku na dachu","Masa własna","Maksymalne obciążenie","Dopuszczalna masa całkowita przyczepy bez hamulców","Dopuszczalna masa całkowita przyczepy z hamulcami przy ruszaniu na wzniesieniu o nachyleniu 12%"].include?(key)
+          value = extract_first_known_value(value)
+        end
+
+        if ["Zużycie paliwa - Cykl mieszany"].include?(key)
+          value = extract_first_known_value(value)
+        end
+
+        if ["Prędkość maksymalna"].include?(key)
+          value = extract_first_known_value(value)
+        end
+
+        if ["Moment obrotowy Silnik elektryczny"].include?(key)
+          value = extract_first_known_value(value)
+        end
