@@ -1,19 +1,17 @@
 GEM
+  remote: https://rubygems.org/
   specs:
     bigdecimal (3.2.2)
     connection_pool (2.5.3)
-    date (3.4.1)
     json (2.12.2)
     logger (1.7.0)
     matrix (0.4.2)
     net-http (0.3.2)
       uri
+    nokogiri (1.18.8-x64-mingw-ucrt)
+      racc (~> 1.4)
     nokogiri (1.18.8-x86_64-linux-gnu)
       racc (~> 1.4)
-    open-uri (0.3.0)
-      stringio
-      time
-      uri
     pdf-core (0.10.0)
     prawn (2.5.0)
       matrix (~> 0.4)
@@ -30,20 +28,17 @@ GEM
       logger (>= 1.6.2)
       rack (>= 3.1.0)
       redis-client (>= 0.23.2)
-    stringio (3.1.7)
-    time (0.2.2)
-      date
     ttfunk (1.8.0)
       bigdecimal (~> 3.1)
     uri (1.0.3)
 
 PLATFORMS
+  x64-mingw-ucrt
   x86_64-linux
 
 DEPENDENCIES
   net-http
   nokogiri
-  open-uri
   prawn
   set
   sidekiq

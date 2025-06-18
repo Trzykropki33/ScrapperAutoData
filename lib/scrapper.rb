@@ -144,9 +144,6 @@ class DataScapper
 
     nil
   end
-
-
-
   def convert_nm_extra(data)
     return nil if data.nil?
     match = data.match(/(\d+(?:[.,]\d+)?)\s*Nm\s*@\s*(\d+)(?:-\d+)?\s*obr\./)
@@ -169,7 +166,6 @@ class DataScapper
     end
     "od #{data1}"
   end
-
 
   def extract_car_name(url)
     path = URI.parse(url).path
@@ -313,8 +309,71 @@ class DataScapper
   def save_to_csv
     file_name = "Report_#{DateTime.now.strftime('%Y%m%d_%H%M%S')}.csv"
 
-    db_head = ["Pełna nazwa","Marka","Model","Link","Liczba drzwi","Liczba miejsc","Średnica zawracania","Promień skrętu","Długość","Szerokość","Szerokość z lusterkami bocznymi","Wysokość","Rozstaw osi","Rozstaw kół - przód","Rozstaw kół - tył","Zwis przedni","Zwis tylny","Prześwit","Długość z hakiem holowniczym","Szerokość ze złożonymi lusterkami bocznymi","Szerokość przy otwartych drzwiach z przodu","Szerokość przy otwartych drzwiach z tyłu","Wysokość z relingami dachowymi","Wysokość z anteną","Wysokość przy otwartej klapie bagażnika","Wysokość przy otwartej pokrywie silnika","Prześwit 4x4","Odległość oparcia fotela przedniego od kierownicy","Długość kolumny kierownicy","Odległość oparcia przedniego od komory silnika","Odległość od siedziska przedniego do dachu","Wysokość siedziska przedniego","Długość siedziska przedniego","Wysokość oparcia przedniego","Odległość pomiędzy siedzeniami przednimi i tylnymi","Odległość od siedziska tylnego do dachu","Odległość od podłogi do siedziska tylnego","Długość siedziska tylnego","Wysokość oparcia tylnego","Szerokość nad podłokietnikami z przodu","Szerokość nad podłokietnikami z tyłu","Szerokość na wysokości podłokietników z przodu","Szerokość na wysokości podłokietników z tyłu","Przestrzeń wsiadania z przodu - szerokość","Przestrzeń wsiadania z przodu - wysokość","Przestrzeń wsiadania z tyłu - szerokość","Przestrzeń wsiadania z tyłu - wysokość","Zakres przesuwania foteli przednich","Całkowita długość wnętrza kabiny","Całkowita szerokość wnętrza kabiny","Całkowita wysokość wnętrza kabiny","Maksymalna pojemność bagażnika (siedzenia złożone)","Minimalna pojemność bagażnika (siedzenia rozłożone)","Szerokość pomiędzy nadkolami","Wysokość bagażnika","Szerokość bagażnika","Długość do oparcia tylnej kanapy","Długość ze złożoną tylną kanapą","Wysokość progu załadowczego","Kąt natarcia","Kąt rampowy","Kąt zejścia","Kąt przechyłu bocznego","Możliwość podjazdu","Głębokość brodzenia","Maksymalna ładowność","Dopuszczalne obciążenie dachu","Powierzchnia „przejrzysta” przedniej szyby","Całkowita powierzchnia „przejrzysta” szyb","Produkowany","Pojemność skokowa","Typ silnika","Moc silnika","Maksymalny moment obrotowy","Moc silnika (spalinowy)","Maksymalny moment obrotowy (spalinowy)","Moc silnika (elektryczny)","Maksymalny moment obrotowy (elektryczny)","Montaż silnika","Doładowanie","Umiejscowienie wałka rozrządu","Liczba cylindrów","Układ cylindrów","Liczba zaworów","Stopień sprężania","Zapłon","Typ wtrysku","Liczba silników","Średnica cylindra × skok tłoka","Układ paliwowy","Dodatkowe informacje","Rodzaj układu kierowniczego","Opony podstawowe","Opony opcjonalne","Felgi podstawowe","Felgi opcjonalne","Rozstaw śrub","Rodzaj hamulców (przód)","Rodzaj hamulców (tył)","Hamowanie (100 do 0km/h) z ABS","Typ układu hamulcowego","Grubość tarcz hamulcowych (przód)","Grubość tarcz hamulcowych (tył)","Średnica tarcz hamulcowych (przód)","Średnica tarcz hamulcowych (tył)","Rodzaj zawieszenia (przód)","Rodzaj zawieszenia  (tył)","Amortyzatory","Rodzaj skrzyni","Nazwa skrzyni","Liczba stopni","Rodzaj napędu","Rodzaj sprzęgła","Prędkość maksymalna","Przyspieszenie (od 0 do 100km/h)","400 metrów ze startu zatrzymanego","1000 metrów ze startu zatrzymanego","Średnie spalanie (cykl mieszany)","Spalanie na trasie (na autostradzie)","Spalanie w mieście","Pojemność akumulatora brutto","Typ ładowarki","Chłodzenie akumulatora","Pojemność akumulatora netto","Metodologia pomiaru zasięgu","Zużycie energii","Maksymalny zasięg przy oszczędnej jeździe na długiej trasie","Średni maksymalny zasięg","Średni minimalny zasięg","Maksymalna moc ładowania DC","Maksymalna moc ładowania AC","Stacja szybkiego ładowania","Gniazdko 3F/Stacja AC","Gniazdko 1F","Pojemność zbiornika paliwa","Zasięg (cykl mieszany)","Zasięg (autostrada)","Zasięg (miasto)","Emisja CO₂","Norma emisji spalin","Minimalna masa własna pojazdu (bez obciążenia)","Maksymalna masa całkowita pojazdu (w pełni obciążonego)","Maksymalna masa przyczepy z hamulcami","Maksymalna masa przyczepy bez hamulców","Maksymalny nacisk na hak","Pojemność akumulatora","Pojemność akumulatora w wersji z klimatyzacja","System start&stop","Kod silnika"]
-    match_head = ["Pełna nazwa","Marka","Model","Link","Liczba drzwi","Liczba miejsc","null","Minimalna średnica skrętu","Długość","Szerokość","Szerokość ze rozłożonymi lusterkami","Wysokość","Rozstaw osi","Rozstaw kół przednich","Rozstaw kół tylnych","zwis przedni","zwis tylny","Prześwit","null","Szerokość ze złożonymi lusterkami","null","null","null","null","null","null","Prześwit","null","null","null","null","null","null","null","null","null","null","null","null","null","null","null","null","null","null","null","null","null","null","null","null","Maksymalna pojemność bagażnika","Minimalna pojemność bagażnika","null","null","null","null","null","null","Kąt natarcia","kąt rampowy","Kąt zejścia","null","null","głębokość brodzenia","null","Dopuszczalna masa ładunku na dachu","null","null","Początek produkcji","null","Układ silnika","null","Moment obrotowy","null","null","null","Moment obrotowy Silnik elektryczny","null","Porty ładowania","Układ rozrządu","Liczba cylindrów","null","Liczba zaworów cylindra","Stopień sprężania","null","Układ wtrysku paliwa","null","Średnica cylindrów","null","null","Układ kierowniczy","Rozmiar opon","Opony opcjonalne","Rozmiar felg","Felgi opcjonalne","null","Hamulce przednie","Hamulce tylne","100 km/h - 0","null","null","null","null","null","Zawieszenie przednie","Zawieszenie tylne","null","Ilość biegów i rodzaj skrzyni biegów","null","Ilość biegów i rodzaj skrzyni biegów","Napęd","null","Prędkość maksymalna","Przyspieszenie 0 - 100 km/h","null","null","Zużycie paliwa - Cykl mieszany","null","null","Pojemność brutto akumulatora","null","null","null","null","Średnie zużycie energii","null","null","null","null","null","null","null","null","Zbiornik paliwa","null","null","null","Emisje CO2","Standard ekologiczny","Masa własna","Maksymalne obciążenie","null","Dopuszczalna masa całkowita przyczepy bez hamulców","Dopuszczalna masa całkowita przyczepy z hamulcami przy ruszaniu na wzniesieniu o nachyleniu 12%","Pojemność brutto akumulatora","null","null","Model/Kod silnika"]
+    #db_head = ["Pełna nazwa","Marka","Model","Link","Liczba drzwi","Liczba miejsc","Średnica zawracania","Promień skrętu","Długość","Szerokość","Szerokość z lusterkami bocznymi","Wysokość","Rozstaw osi","Rozstaw kół - przód","Rozstaw kół - tył","Zwis przedni","Zwis tylny","Prześwit","Długość z hakiem holowniczym","Szerokość ze złożonymi lusterkami bocznymi","Szerokość przy otwartych drzwiach z przodu","Szerokość przy otwartych drzwiach z tyłu","Wysokość z relingami dachowymi","Wysokość z anteną","Wysokość przy otwartej klapie bagażnika","Wysokość przy otwartej pokrywie silnika","Prześwit 4x4","Odległość oparcia fotela przedniego od kierownicy","Długość kolumny kierownicy","Odległość oparcia przedniego od komory silnika","Odległość od siedziska przedniego do dachu","Wysokość siedziska przedniego","Długość siedziska przedniego","Wysokość oparcia przedniego","Odległość pomiędzy siedzeniami przednimi i tylnymi","Odległość od siedziska tylnego do dachu","Odległość od podłogi do siedziska tylnego","Długość siedziska tylnego","Wysokość oparcia tylnego","Szerokość nad podłokietnikami z przodu","Szerokość nad podłokietnikami z tyłu","Szerokość na wysokości podłokietników z przodu","Szerokość na wysokości podłokietników z tyłu","Przestrzeń wsiadania z przodu - szerokość","Przestrzeń wsiadania z przodu - wysokość","Przestrzeń wsiadania z tyłu - szerokość","Przestrzeń wsiadania z tyłu - wysokość","Zakres przesuwania foteli przednich","Całkowita długość wnętrza kabiny","Całkowita szerokość wnętrza kabiny","Całkowita wysokość wnętrza kabiny","Maksymalna pojemność bagażnika (siedzenia złożone)","Minimalna pojemność bagażnika (siedzenia rozłożone)","Szerokość pomiędzy nadkolami","Wysokość bagażnika","Szerokość bagażnika","Długość do oparcia tylnej kanapy","Długość ze złożoną tylną kanapą","Wysokość progu załadowczego","Kąt natarcia","Kąt rampowy","Kąt zejścia","Kąt przechyłu bocznego","Możliwość podjazdu","Głębokość brodzenia","Maksymalna ładowność","Dopuszczalne obciążenie dachu","Powierzchnia „przejrzysta” przedniej szyby","Całkowita powierzchnia „przejrzysta” szyb","Produkowany","Pojemność skokowa","Typ silnika","Moc silnika","Maksymalny moment obrotowy","Moc silnika (spalinowy)","Maksymalny moment obrotowy (spalinowy)","Moc silnika (elektryczny)","Maksymalny moment obrotowy (elektryczny)","Montaż silnika","Doładowanie","Umiejscowienie wałka rozrządu","Liczba cylindrów","Układ cylindrów","Liczba zaworów","Stopień sprężania","Zapłon","Typ wtrysku","Liczba silników","Średnica cylindra × skok tłoka","Układ paliwowy","Dodatkowe informacje","Rodzaj układu kierowniczego","Opony podstawowe","Opony opcjonalne","Felgi podstawowe","Felgi opcjonalne","Rozstaw śrub","Rodzaj hamulców (przód)","Rodzaj hamulców (tył)","Hamowanie (100 do 0km/h) z ABS","Typ układu hamulcowego","Grubość tarcz hamulcowych (przód)","Grubość tarcz hamulcowych (tył)","Średnica tarcz hamulcowych (przód)","Średnica tarcz hamulcowych (tył)","Rodzaj zawieszenia (przód)","Rodzaj zawieszenia  (tył)","Amortyzatory","Rodzaj skrzyni","Nazwa skrzyni","Liczba stopni","Rodzaj napędu","Rodzaj sprzęgła","Prędkość maksymalna","Przyspieszenie (od 0 do 100km/h)","400 metrów ze startu zatrzymanego","1000 metrów ze startu zatrzymanego","Średnie spalanie (cykl mieszany)","Spalanie na trasie (na autostradzie)","Spalanie w mieście","Pojemność akumulatora brutto","Typ ładowarki","Chłodzenie akumulatora","Pojemność akumulatora netto","Metodologia pomiaru zasięgu","Zużycie energii","Maksymalny zasięg przy oszczędnej jeździe na długiej trasie","Średni maksymalny zasięg","Średni minimalny zasięg","Maksymalna moc ładowania DC","Maksymalna moc ładowania AC","Stacja szybkiego ładowania","Gniazdko 3F/Stacja AC","Gniazdko 1F","Pojemność zbiornika paliwa","Zasięg (cykl mieszany)","Zasięg (autostrada)","Zasięg (miasto)","Emisja CO₂","Norma emisji spalin","Minimalna masa własna pojazdu (bez obciążenia)","Maksymalna masa całkowita pojazdu (w pełni obciążonego)","Maksymalna masa przyczepy z hamulcami","Maksymalna masa przyczepy bez hamulców","Maksymalny nacisk na hak","Pojemność akumulatora","Pojemność akumulatora w wersji z klimatyzacja","System start&stop","Kod silnika"]
+    #match_head = ["Pełna nazwa","Marka","Model","Link","Liczba drzwi","Liczba miejsc","null","Minimalna średnica skrętu","Długość","Szerokość","Szerokość ze rozłożonymi lusterkami","Wysokość","Rozstaw osi","Rozstaw kół przednich","Rozstaw kół tylnych","zwis przedni","zwis tylny","Prześwit","null","Szerokość ze złożonymi lusterkami","null","null","null","null","null","null","Prześwit","null","null","null","null","null","null","null","null","null","null","null","null","null","null","null","null","null","null","null","null","null","null","null","null","Maksymalna pojemność bagażnika","Minimalna pojemność bagażnika","null","null","null","null","null","null","Kąt natarcia","kąt rampowy","Kąt zejścia","null","null","głębokość brodzenia","null","Dopuszczalna masa ładunku na dachu","null","null","Początek produkcji","null","Układ silnika","null","Moment obrotowy","null","null","null","Moment obrotowy Silnik elektryczny","null","Porty ładowania","Układ rozrządu","Liczba cylindrów","null","Liczba zaworów cylindra","Stopień sprężania","null","Układ wtrysku paliwa","null","Średnica cylindrów","null","null","Układ kierowniczy","Rozmiar opon","Opony opcjonalne","Rozmiar felg","Felgi opcjonalne","null","Hamulce przednie","Hamulce tylne","100 km/h - 0","null","null","null","null","null","Zawieszenie przednie","Zawieszenie tylne","null","Ilość biegów i rodzaj skrzyni biegów","null","Ilość biegów i rodzaj skrzyni biegów","Napęd","null","Prędkość maksymalna","Przyspieszenie 0 - 100 km/h","null","null","Zużycie paliwa - Cykl mieszany","null","null","Pojemność brutto akumulatora","null","null","null","null","Średnie zużycie energii","null","null","null","null","null","null","null","null","Zbiornik paliwa","null","null","null","Emisje CO2","Standard ekologiczny","Masa własna","Maksymalne obciążenie","null","Dopuszczalna masa całkowita przyczepy bez hamulców","Dopuszczalna masa całkowita przyczepy z hamulcami przy ruszaniu na wzniesieniu o nachyleniu 12%","Pojemność brutto akumulatora","null","null","Model/Kod silnika"]
+
+    match_head = [
+      "rok Produkcji",
+      "paliwo",
+      "marka",
+      "model",
+      "Wersja",
+      "pojemność",
+      "Silnik:",
+      "Układ zasilania:",
+      "St. sprzężania:",
+      "MOC SILNIKA kM",
+      "MOC SILNIKA kW",
+      "przy obr/min",
+      "Maks. moment obrotowy w Nm",
+      "0-100 km/h:",
+      "V-max:",
+      "zużycie paliwa miasto",
+      "zużycie paliwa trasa",
+      "średnie zużycie paliwa",
+      "ilość oleju silnikowego",
+      "rodzaj oleju silnikowego",
+      "ilość oleju skrzynia biegów",
+      "rodzaj oleju skrzynia biegów",
+      "rodzaj płynu hamulcowego",
+      "ilość płynu hamulcowego",
+      "rodzaj płynu chłodniczego",
+      "ilość płynu chłodniczego",
+      "rozmiar kół",
+      "tech_data"
+    ]
+
+    db_head = [
+      "Produkowany",
+      "Typ wtrysku",
+      "Marka",
+      "Model",
+      "Pełna nazwa",
+      "Pojemność skokowa",
+      "Typ silnika",
+      "Układ paliwowy",
+      "Stopień sprężania",
+      "Moc silnika",
+      "Moc silnika (spalinowy)",
+      "przy obr/min",
+      "Maksymalny moment obrotowy",
+      "Przyspieszenie (od 0 do 100km/h)",
+      "Prędkość maksymalna",
+      "Spalanie w mieście",
+      "Spalanie na trasie (na autostradzie)",
+      "Średnie spalanie (cykl mieszany)",
+      "ilość oleju silnikowego",  # załóżmy, że to pole istnieje
+      "rodzaj oleju silnikowego", # j.w.
+      "ilość oleju skrzynia biegów",
+      "rodzaj oleju skrzynia biegów",
+      "rodzaj płynu hamulcowego",
+      "ilość płynu hamulcowego",
+      "rodzaj płynu chłodniczego",
+      "ilość płynu chłodniczego",
+      "Opony podstawowe",
+      "tech_data"
+    ]
+
 
     transition_map = db_head.zip(match_head).to_h
 

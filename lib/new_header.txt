@@ -1,0 +1,28 @@
+rok Produkcji
+paliwo
+marka
+model
+Wersja
+pojemność
+Silnik:
+Układ zasilania:
+St. sprzężania:
+MOC SILNIKA kM
+MOC SILNIKA kW
+przy obr/min
+Maks. moment obrotowy w Nm
+0-100 km/h:
+V-max:
+zużycie paliwa miasto
+zużycie paliwa trasa
+średnie zużycie paliwa
+ilość oleju silnikowego
+rodzaj oleju silnikowego
+ilość oleju skrzynia biegów
+rodzaj oleju skrzynia biegów
+rodzaj płynu hamulcowego
+ilość płynu hamulcowego
+rodzaj płynu chłodniczego
+ilość płynu chłodniczego
+rozmiar kół
+tech_data
