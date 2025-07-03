@@ -123,7 +123,7 @@ class DataScapper
     end
     configs
   end
-  def extract_first_known_value(data, with_unit: true)
+  def extract_first_known_value(data, with_unit: false)
     return nil if data.nil?
 
     patterns = [
@@ -135,6 +135,7 @@ class DataScapper
       /(\d+(?:\.\d+)?)\s*kg/i,
       /(\d+(?:\.\d+)?)\s*km\/h/i,
       /(\d+(?:\.\d+)?)\s*nm/i,
+      /(\d+(?:\.\d+)?)\s*cm3/i,
     ]
 
     patterns.each do |regex|
@@ -144,6 +145,9 @@ class DataScapper
 
     nil
   end
+
+
+
   def convert_nm_extra(data)
     return nil if data.nil?
     match = data.match(/(\d+(?:[.,]\d+)?)\s*Nm\s*@\s*(\d+)(?:-\d+)?\s*obr\./)
@@ -153,19 +157,20 @@ class DataScapper
       rpm = match[2]
       "#{torque} Nm przy #{rpm} obr/min"
     else
-      "brak danych"
+      ""
     end
   end
 
   def get_date_of_production(data1,data2=nil)
     return nil if data1.nil?
-    year_match = data1.match(/(\d{4})\s*r/i)
+    year_match = data1.match(/(\d{4})/i)
     unless data2.nil?
-      end_match = data2.match(/(\d{4})\s*r/i)
-      return "od #{year_match} do #{end_match}"
+      end_match = data2.match(/(\d{4})/i)
+      return "#{year_match}-#{end_match}"
     end
-    "od #{data1}"
+    "#{data1}"
   end
+
 
   def extract_car_name(url)
     path = URI.parse(url).path
@@ -211,6 +216,11 @@ class DataScapper
     end
   end
 
+  def extract_cycle_type(header)
+    match = header.match(/(Zużycie paliwa - Cykl (miejski|pozamiejski|mieszany))/i)
+    match[1] if match
+  end
+
 
   def technical_data(config_url)
     config_url.each do |line|
@@ -235,16 +245,16 @@ class DataScapper
         value = td.text.gsub(/\s+/, ' ').strip.gsub(";", " ")
 
         if value == "Zaloguj się, aby zobaczyć."
-          value = "brak danych"
+          value = ""
         end
 
-        if ["Długość", "Szerokość", "Wysokość", "Rozstaw osi","Szerokość ze rozłożonymi lusterkami","głębokość brodzenia", "Rozstaw kół przednich", "Rozstaw kół tylnych", "zwis przedni", "zwis tylny", "Układ silnika","Średnica cylindrów","Prześwit", "Szerokość ze złożonymi lusterkami","Minimalna średnica skrętu","Minimalna pojemność bagażnika","Zbiornik paliwa","Maksymalna pojemność bagażnika","Dopuszczalna masa ładunku na dachu","Masa własna","Maksymalne obciążenie","Dopuszczalna masa całkowita przyczepy bez hamulców","Dopuszczalna masa całkowita przyczepy z hamulcami przy ruszaniu na wzniesieniu o nachyleniu 12%","Zużycie paliwa - Cykl mieszany","Prędkość maksymalna","Moment obrotowy Silnik elektryczny"].include?(key)
+        if ["Długość", "Szerokość", "Wysokość","Moment obrotowy", "Rozstaw osi","Szerokość ze rozłożonymi lusterkami","głębokość brodzenia", "Rozstaw kół przednich", "Rozstaw kół tylnych", "zwis przedni", "zwis tylny", "Układ silnika","Średnica cylindrów","Prześwit", "Szerokość ze złożonymi lusterkami","Minimalna średnica skrętu","Minimalna pojemność bagażnika","Zbiornik paliwa","Maksymalna pojemność bagażnika","Dopuszczalna masa ładunku na dachu","Masa własna","Maksymalne obciążenie","Dopuszczalna masa całkowita przyczepy bez hamulców","Dopuszczalna masa całkowita przyczepy z hamulcami przy ruszaniu na wzniesieniu o nachyleniu 12%","Zużycie paliwa - Cykl mieszany","Prędkość maksymalna","Moment obrotowy Silnik elektryczny","Ilość oleju w silniku","płyn chłodzący"].include?(key)
           value = extract_first_known_value(value)
         end
 
-        if ["Moment obrotowy"].include?(key)
-          value = convert_nm_extra(value)
-        end
+        # if ["Moment obrotowy"].include?(key)
+        #   value = convert_nm_extra(value)
+        # end
 
         if ["Liczba miejsc"].include?(key)
           value = value[/\d+/]
@@ -258,7 +268,7 @@ class DataScapper
           data = split_tires(value)
           value = data[0]
           if data[1].nil?
-            data_map["Opony opcjonalne"] = "brak danych"
+            data_map["Opony opcjonalne"] = ""
           else
             data_map["Opony opcjonalne"] = data[1]
           end
@@ -268,7 +278,7 @@ class DataScapper
           data = split_rims(value)
           value = data[0]
           if data[1].nil?
-            data_map["Felgi opcjonalne"] = "brak danych"
+            data_map["Felgi opcjonalne"] = ""
           else
             data_map["Felgi opcjonalne"] = data[1]
           end
@@ -282,7 +292,7 @@ class DataScapper
           elsif value == "Napęd na przednie koła"
             value = "na przednią oś"
           else
-            value = "brak danych"
+            value = ""
           end
         end
 
@@ -294,12 +304,45 @@ class DataScapper
           value = extract_co2(value)
         end
 
+        if [
+          "Zużycie paliwa - Cykl miejski",
+          "Zużycie paliwa - Cykl pozamiejski",
+          "Zużycie paliwa - Cykl mieszany"
+        ].any? { |pattern| key.include?(pattern) }
+          key = extract_cycle_type(key)
+          value = value.to_s
+          value = value[/(\d+(?:\.\d+)?)/]
+          #puts "#{key} : #{value}"
+        end
+
         @all_heads << key
         data_map[key] = value
       end
 
+      t_data_head = ["Długość","Szerokość","Wysokość","Rozstaw osi","Liczba drzwi","Liczba miejsc","Ilość biegów","Napęd","Rodzaj skrzyni","Rozmiar opon ","Rozmiar felg","Zbiornik paliwa","Masa własna","Minimalna pojemność bagażnika","Maksymalna pojemność bagażnika"]
+      data="{"
+      t_data_head.each do |key|
+
+        if data_map["Ilość biegów i rodzaj skrzyni biegów"].nil?
+          data += "\"#{key}\": \"null\","
+        elsif key == "Ilość biegów"
+          data += "\"#{key}\": \"#{data_map["Ilość biegów i rodzaj skrzyni biegów"][/\d+/].to_i}\","
+        elsif key == "Rodzaj skrzyni"
+          data +=  "\"#{key}\": \"#{data_map["Ilość biegów i rodzaj skrzyni biegów"][/skrzynia biegów\s+(.*)/i,1]}\","
+        else
+          data += "\"#{key}\": \"#{data_map[key]}\","
+        end
+      end
+      data.chomp!(",")
+      data += "}"
+      data_map["tech_data"] = data
+      #puts data
+
       data_map["Link"] = line
       @all_heads << "Link"
+
+      data_map["Produkowany"] = get_date_of_production(data_map["Początek produkcji"],data_map["Koniec produkcji"])
+      @all_heads << "Produkowany"
 
       @all_data << data_map
     end
@@ -309,74 +352,10 @@ class DataScapper
   def save_to_csv
     file_name = "Report_#{DateTime.now.strftime('%Y%m%d_%H%M%S')}.csv"
 
-    #db_head = ["Pełna nazwa","Marka","Model","Link","Liczba drzwi","Liczba miejsc","Średnica zawracania","Promień skrętu","Długość","Szerokość","Szerokość z lusterkami bocznymi","Wysokość","Rozstaw osi","Rozstaw kół - przód","Rozstaw kół - tył","Zwis przedni","Zwis tylny","Prześwit","Długość z hakiem holowniczym","Szerokość ze złożonymi lusterkami bocznymi","Szerokość przy otwartych drzwiach z przodu","Szerokość przy otwartych drzwiach z tyłu","Wysokość z relingami dachowymi","Wysokość z anteną","Wysokość przy otwartej klapie bagażnika","Wysokość przy otwartej pokrywie silnika","Prześwit 4x4","Odległość oparcia fotela przedniego od kierownicy","Długość kolumny kierownicy","Odległość oparcia przedniego od komory silnika","Odległość od siedziska przedniego do dachu","Wysokość siedziska przedniego","Długość siedziska przedniego","Wysokość oparcia przedniego","Odległość pomiędzy siedzeniami przednimi i tylnymi","Odległość od siedziska tylnego do dachu","Odległość od podłogi do siedziska tylnego","Długość siedziska tylnego","Wysokość oparcia tylnego","Szerokość nad podłokietnikami z przodu","Szerokość nad podłokietnikami z tyłu","Szerokość na wysokości podłokietników z przodu","Szerokość na wysokości podłokietników z tyłu","Przestrzeń wsiadania z przodu - szerokość","Przestrzeń wsiadania z przodu - wysokość","Przestrzeń wsiadania z tyłu - szerokość","Przestrzeń wsiadania z tyłu - wysokość","Zakres przesuwania foteli przednich","Całkowita długość wnętrza kabiny","Całkowita szerokość wnętrza kabiny","Całkowita wysokość wnętrza kabiny","Maksymalna pojemność bagażnika (siedzenia złożone)","Minimalna pojemność bagażnika (siedzenia rozłożone)","Szerokość pomiędzy nadkolami","Wysokość bagażnika","Szerokość bagażnika","Długość do oparcia tylnej kanapy","Długość ze złożoną tylną kanapą","Wysokość progu załadowczego","Kąt natarcia","Kąt rampowy","Kąt zejścia","Kąt przechyłu bocznego","Możliwość podjazdu","Głębokość brodzenia","Maksymalna ładowność","Dopuszczalne obciążenie dachu","Powierzchnia „przejrzysta” przedniej szyby","Całkowita powierzchnia „przejrzysta” szyb","Produkowany","Pojemność skokowa","Typ silnika","Moc silnika","Maksymalny moment obrotowy","Moc silnika (spalinowy)","Maksymalny moment obrotowy (spalinowy)","Moc silnika (elektryczny)","Maksymalny moment obrotowy (elektryczny)","Montaż silnika","Doładowanie","Umiejscowienie wałka rozrządu","Liczba cylindrów","Układ cylindrów","Liczba zaworów","Stopień sprężania","Zapłon","Typ wtrysku","Liczba silników","Średnica cylindra × skok tłoka","Układ paliwowy","Dodatkowe informacje","Rodzaj układu kierowniczego","Opony podstawowe","Opony opcjonalne","Felgi podstawowe","Felgi opcjonalne","Rozstaw śrub","Rodzaj hamulców (przód)","Rodzaj hamulców (tył)","Hamowanie (100 do 0km/h) z ABS","Typ układu hamulcowego","Grubość tarcz hamulcowych (przód)","Grubość tarcz hamulcowych (tył)","Średnica tarcz hamulcowych (przód)","Średnica tarcz hamulcowych (tył)","Rodzaj zawieszenia (przód)","Rodzaj zawieszenia  (tył)","Amortyzatory","Rodzaj skrzyni","Nazwa skrzyni","Liczba stopni","Rodzaj napędu","Rodzaj sprzęgła","Prędkość maksymalna","Przyspieszenie (od 0 do 100km/h)","400 metrów ze startu zatrzymanego","1000 metrów ze startu zatrzymanego","Średnie spalanie (cykl mieszany)","Spalanie na trasie (na autostradzie)","Spalanie w mieście","Pojemność akumulatora brutto","Typ ładowarki","Chłodzenie akumulatora","Pojemność akumulatora netto","Metodologia pomiaru zasięgu","Zużycie energii","Maksymalny zasięg przy oszczędnej jeździe na długiej trasie","Średni maksymalny zasięg","Średni minimalny zasięg","Maksymalna moc ładowania DC","Maksymalna moc ładowania AC","Stacja szybkiego ładowania","Gniazdko 3F/Stacja AC","Gniazdko 1F","Pojemność zbiornika paliwa","Zasięg (cykl mieszany)","Zasięg (autostrada)","Zasięg (miasto)","Emisja CO₂","Norma emisji spalin","Minimalna masa własna pojazdu (bez obciążenia)","Maksymalna masa całkowita pojazdu (w pełni obciążonego)","Maksymalna masa przyczepy z hamulcami","Maksymalna masa przyczepy bez hamulców","Maksymalny nacisk na hak","Pojemność akumulatora","Pojemność akumulatora w wersji z klimatyzacja","System start&stop","Kod silnika"]
-    #match_head = ["Pełna nazwa","Marka","Model","Link","Liczba drzwi","Liczba miejsc","null","Minimalna średnica skrętu","Długość","Szerokość","Szerokość ze rozłożonymi lusterkami","Wysokość","Rozstaw osi","Rozstaw kół przednich","Rozstaw kół tylnych","zwis przedni","zwis tylny","Prześwit","null","Szerokość ze złożonymi lusterkami","null","null","null","null","null","null","Prześwit","null","null","null","null","null","null","null","null","null","null","null","null","null","null","null","null","null","null","null","null","null","null","null","null","Maksymalna pojemność bagażnika","Minimalna pojemność bagażnika","null","null","null","null","null","null","Kąt natarcia","kąt rampowy","Kąt zejścia","null","null","głębokość brodzenia","null","Dopuszczalna masa ładunku na dachu","null","null","Początek produkcji","null","Układ silnika","null","Moment obrotowy","null","null","null","Moment obrotowy Silnik elektryczny","null","Porty ładowania","Układ rozrządu","Liczba cylindrów","null","Liczba zaworów cylindra","Stopień sprężania","null","Układ wtrysku paliwa","null","Średnica cylindrów","null","null","Układ kierowniczy","Rozmiar opon","Opony opcjonalne","Rozmiar felg","Felgi opcjonalne","null","Hamulce przednie","Hamulce tylne","100 km/h - 0","null","null","null","null","null","Zawieszenie przednie","Zawieszenie tylne","null","Ilość biegów i rodzaj skrzyni biegów","null","Ilość biegów i rodzaj skrzyni biegów","Napęd","null","Prędkość maksymalna","Przyspieszenie 0 - 100 km/h","null","null","Zużycie paliwa - Cykl mieszany","null","null","Pojemność brutto akumulatora","null","null","null","null","Średnie zużycie energii","null","null","null","null","null","null","null","null","Zbiornik paliwa","null","null","null","Emisje CO2","Standard ekologiczny","Masa własna","Maksymalne obciążenie","null","Dopuszczalna masa całkowita przyczepy bez hamulców","Dopuszczalna masa całkowita przyczepy z hamulcami przy ruszaniu na wzniesieniu o nachyleniu 12%","Pojemność brutto akumulatora","null","null","Model/Kod silnika"]
-
-    match_head = [
-      "rok Produkcji",
-      "paliwo",
-      "marka",
-      "model",
-      "Wersja",
-      "pojemność",
-      "Silnik:",
-      "Układ zasilania:",
-      "St. sprzężania:",
-      "MOC SILNIKA kM",
-      "MOC SILNIKA kW",
-      "przy obr/min",
-      "Maks. moment obrotowy w Nm",
-      "0-100 km/h:",
-      "V-max:",
-      "zużycie paliwa miasto",
-      "zużycie paliwa trasa",
-      "średnie zużycie paliwa",
-      "ilość oleju silnikowego",
-      "rodzaj oleju silnikowego",
-      "ilość oleju skrzynia biegów",
-      "rodzaj oleju skrzynia biegów",
-      "rodzaj płynu hamulcowego",
-      "ilość płynu hamulcowego",
-      "rodzaj płynu chłodniczego",
-      "ilość płynu chłodniczego",
-      "rozmiar kół",
-      "tech_data"
-    ]
-
-    db_head = [
-      "Produkowany",
-      "Typ wtrysku",
-      "Marka",
-      "Model",
-      "Pełna nazwa",
-      "Pojemność skokowa",
-      "Typ silnika",
-      "Układ paliwowy",
-      "Stopień sprężania",
-      "Moc silnika",
-      "Moc silnika (spalinowy)",
-      "przy obr/min",
-      "Maksymalny moment obrotowy",
-      "Przyspieszenie (od 0 do 100km/h)",
-      "Prędkość maksymalna",
-      "Spalanie w mieście",
-      "Spalanie na trasie (na autostradzie)",
-      "Średnie spalanie (cykl mieszany)",
-      "ilość oleju silnikowego",  # załóżmy, że to pole istnieje
-      "rodzaj oleju silnikowego", # j.w.
-      "ilość oleju skrzynia biegów",
-      "rodzaj oleju skrzynia biegów",
-      "rodzaj płynu hamulcowego",
-      "ilość płynu hamulcowego",
-      "rodzaj płynu chłodniczego",
-      "ilość płynu chłodniczego",
-      "Opony podstawowe",
-      "tech_data"
-    ]
-
+    db_head =     ["rok produkcji","paliwo",    "marka","model","Wersja",   "pojemność w cm³",  "Silnik:",              "Układ zasilania:",     "Średnica × skok tłoka:", "St. sprężania:",   "MOC SILNIKA kM","MOC SILNIKA kW","przy obr/min","Maks. moment obrotowy w Nm","0-100 km/h:",                "V-max:",             "zużycie paliwa miasto",        "zużycie paliwa trasa",     "średnie zużycie paliwa", "ilość oleju silnikowego","rodzaj oleju silnikowego",       "ilość oleju skrzynia biegów","rodzaj oleju skrzynia biegów","rodzaj płynu hamulcowego","ilość płynu hamulcowego","rodzaj płynu chłodniczego","ilość płynu chłodniczego","rozmiar kół","tech_data"]
+    match_head =  ["Produkowany",  "Typ paliwa","Marka","Model","Generacja","Pojemność silnika","Modyfikacja (Silnik)", "Układ wtrysku paliwa", "Średnica cylindrów",     "Stopień sprężania","Moc",            "Moc",          "Moc",         "Moment obrotowy",           "Przyspieszenie 0 - 100 km/h","Prędkość maksymalna","Zużycie paliwa - Cykl miejski", "Zużycie paliwa - Cykl pozamiejski", "Zużycie paliwa - Cykl mieszany",                "Ilość oleju w silniku",  "Specyfikacja oleju silnikowego", "null",                       "null",                        "null",                    "null",                   "null",                     "płyn chłodzący",          "Rozmiar opon","tech_data"]
 
     transition_map = db_head.zip(match_head).to_h
-
     CSV.open(file_name, 'w', col_sep: ";") do |csv|
       csv << db_head
 
@@ -384,22 +363,46 @@ class DataScapper
         next if row.nil?
         csv << db_head.map do |header|
           local_key = transition_map[header]
+          #puts "header: #{header}, local_key: #{local_key}"
           if local_key.nil? || local_key.downcase == "null" || row[local_key].nil?  ||  row[local_key] == ""
-            "brak danych"
+            ""
           else
             if row[local_key] == "Zaloguj się, aby zobaczyć."
-              row[local_key] == "brak danych"
+              row[local_key] == ""
             end
-              if header == "Rodzaj skrzyni"
-                row[local_key].match(/(automatyczna|manualna|półautomatyczna|dwusprzęgłowa|bezstopniowa)/i)
-              elsif header == "Liczba stopni"
-                row[local_key].match(/(\d+)\s*bieg(?:ów|i)?/i)
-              elsif header == "Nazwa skrzyni"
-                row[local_key].match(/skrzynia biegów\s+(.+)$/i)
-              elsif header == "Produkowany"
-                get_date_of_production(row["Początek produkcji"],row["Koniec produkcji"])
+              if header == "Silnik:"
+                if row["Pojemność silnika"].nil? || row["Liczba cylindrów"].nil? || row["Konfiguracja silnika"].nil?
+                  return ""
+                end
+                liters = extract_first_known_value(row["Pojemność silnika"], with_unit: false) / 1000
+                liters = (liters * 10).ceil / 10.0
+                "#{ liters } L, ilość cylindrów: #{ row["Liczba cylindrów"] }, układ cylindrów: #{ row["Konfiguracja silnika"] }"
+              elsif header == "pojemność w cm³"
+                extract_first_known_value(row["Pojemność silnika"], with_unit: false).to_i
+              elsif header == "MOC SILNIKA kM"
+                if row["Moc"].nil?
+                  return ""
+                end
+                row["Moc"].match(/\d+/)
+              elsif header == "MOC SILNIKA kW"
+                if row["Moc"].nil?
+                  return ""
+                end
+                kW = row["Moc"][/\d+/].to_f
+                kW = (kW * 0.74).to_i
+                kW
+              elsif header == "przy obr/min"
+                if row["Moc"].nil?
+                  return ""
+                end
+                row["Moc"].match(/\s+\d+/).to_s
+              elsif header == "0-100 km/h:"
+                if row[local_key].nil?
+                  return ""
+                end
+                row[local_key][/(\d+(?:\.\d+)?)/]
               else
-                row[local_key] || "brak danych"
+                row[local_key] || ""
               end
           end
         end

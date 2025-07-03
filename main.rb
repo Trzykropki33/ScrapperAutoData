@@ -45,7 +45,7 @@ ends =  Time.now
 puts "Czytanie danych : #{(ends - start)}"
 
 start = Time.now
-scrapper.technical_data(configs[300...310])
+scrapper.technical_data(configs)
 ends =  Time.now
 puts "Scrapowanie Danych : #{(ends - start)}"
 
