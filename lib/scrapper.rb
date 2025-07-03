@@ -223,190 +223,382 @@ class DataScapper
 
 
   def technical_data(config_url)
-    config_url.each do |line|
-      puts line
-      begin
-        raise "Niepoprawny URL: #{line}" unless line =~ /^https?:\/\//
-        doc = Nokogiri::HTML(URI.open(line))
-      rescue => e
-        puts "Błąd podczas otwierania URL: #{e.message}"
-        next
-      end
-      table = doc.xpath("/html/body/div[2]/table")
-      data_map = {}
-      data_map["Pełna nazwa"] = extract_car_name(line)
-      table.search('tr').each do |row|
-        next if row.css('.no, .no2').any?
-        th = row.at('th')
-        td = row.at('td')
-        next if th.nil? || td.nil?
-
-        key = th.text.gsub(/\s+/, ' ').strip
-        value = td.text.gsub(/\s+/, ' ').strip.gsub(";", " ")
-
-        if value == "Zaloguj się, aby zobaczyć."
-          value = ""
-        end
-
-        if ["Długość", "Szerokość", "Wysokość","Moment obrotowy", "Rozstaw osi","Szerokość ze rozłożonymi lusterkami","głębokość brodzenia", "Rozstaw kół przednich", "Rozstaw kół tylnych", "zwis przedni", "zwis tylny", "Układ silnika","Średnica cylindrów","Prześwit", "Szerokość ze złożonymi lusterkami","Minimalna średnica skrętu","Minimalna pojemność bagażnika","Zbiornik paliwa","Maksymalna pojemność bagażnika","Dopuszczalna masa ładunku na dachu","Masa własna","Maksymalne obciążenie","Dopuszczalna masa całkowita przyczepy bez hamulców","Dopuszczalna masa całkowita przyczepy z hamulcami przy ruszaniu na wzniesieniu o nachyleniu 12%","Zużycie paliwa - Cykl mieszany","Prędkość maksymalna","Moment obrotowy Silnik elektryczny","Ilość oleju w silniku","płyn chłodzący"].include?(key)
-          value = extract_first_known_value(value)
-        end
-
-        # if ["Moment obrotowy"].include?(key)
-        #   value = convert_nm_extra(value)
-        # end
-
-        if ["Liczba miejsc"].include?(key)
-          value = value[/\d+/]
-        end
-
-        if ["Model/Kod silnika"].include?(key)
-          value = split_engine_model(value)
-        end
-
-        if ["Rozmiar opon"].include?(key)
-          data = split_tires(value)
-          value = data[0]
-          if data[1].nil?
-            data_map["Opony opcjonalne"] = ""
-          else
-            data_map["Opony opcjonalne"] = data[1]
-          end
-        end
-
-        if ["Rozmiar felg"].include?(key)
-          data = split_rims(value)
-          value = data[0]
-          if data[1].nil?
-            data_map["Felgi opcjonalne"] = ""
-          else
-            data_map["Felgi opcjonalne"] = data[1]
-          end
-        end
-
-        if ["Napęd"].include?(key)
-          if value == "Napęd na wszystkie koła (4x4)"
-            value = "4x4"
-          elsif value == "Napęd na tylne koła"
-            value = "na tylną oś"
-          elsif value == "Napęd na przednie koła"
-            value = "na przednią oś"
-          else
-            value = ""
-          end
-        end
-
-        if ["Średnie zużycie energii"].include?(key)
-          value = extract_kwh(value)
-        end
-
-        if ["Emisje CO2"].include?(key)
-          value = extract_co2(value)
-        end
-
-        if [
-          "Zużycie paliwa - Cykl miejski",
-          "Zużycie paliwa - Cykl pozamiejski",
-          "Zużycie paliwa - Cykl mieszany"
-        ].any? { |pattern| key.include?(pattern) }
-          key = extract_cycle_type(key)
-          value = value.to_s
-          value = value[/(\d+(?:\.\d+)?)/]
-          #puts "#{key} : #{value}"
-        end
-
-        @all_heads << key
-        data_map[key] = value
-      end
-
-      t_data_head = ["Długość","Szerokość","Wysokość","Rozstaw osi","Liczba drzwi","Liczba miejsc","Ilość biegów","Napęd","Rodzaj skrzyni","Rozmiar opon ","Rozmiar felg","Zbiornik paliwa","Masa własna","Minimalna pojemność bagażnika","Maksymalna pojemność bagażnika"]
-      data="{"
-      t_data_head.each do |key|
-
-        if data_map["Ilość biegów i rodzaj skrzyni biegów"].nil?
-          data += "\"#{key}\": \"null\","
-        elsif key == "Ilość biegów"
-          data += "\"#{key}\": \"#{data_map["Ilość biegów i rodzaj skrzyni biegów"][/\d+/].to_i}\","
-        elsif key == "Rodzaj skrzyni"
-          data +=  "\"#{key}\": \"#{data_map["Ilość biegów i rodzaj skrzyni biegów"][/skrzynia biegów\s+(.*)/i,1]}\","
-        else
-          data += "\"#{key}\": \"#{data_map[key]}\","
-        end
-      end
-      data.chomp!(",")
-      data += "}"
-      data_map["tech_data"] = data
-      #puts data
-
-      data_map["Link"] = line
-      @all_heads << "Link"
-
-      data_map["Produkowany"] = get_date_of_production(data_map["Początek produkcji"],data_map["Koniec produkcji"])
-      @all_heads << "Produkowany"
-
-      @all_data << data_map
-    end
-    save_to_csv
-  end
-
-  def save_to_csv
+    # Inicjalizacja pliku CSV
     file_name = "Report_#{DateTime.now.strftime('%Y%m%d_%H%M%S')}.csv"
 
-    db_head =     ["rok produkcji","paliwo",    "marka","model","Wersja",   "pojemność w cm³",  "Silnik:",              "Układ zasilania:",     "Średnica × skok tłoka:", "St. sprężania:",   "MOC SILNIKA kM","MOC SILNIKA kW","przy obr/min","Maks. moment obrotowy w Nm","0-100 km/h:",                "V-max:",             "zużycie paliwa miasto",        "zużycie paliwa trasa",     "średnie zużycie paliwa", "ilość oleju silnikowego","rodzaj oleju silnikowego",       "ilość oleju skrzynia biegów","rodzaj oleju skrzynia biegów","rodzaj płynu hamulcowego","ilość płynu hamulcowego","rodzaj płynu chłodniczego","ilość płynu chłodniczego","rozmiar kół","tech_data"]
-    match_head =  ["Produkowany",  "Typ paliwa","Marka","Model","Generacja","Pojemność silnika","Modyfikacja (Silnik)", "Układ wtrysku paliwa", "Średnica cylindrów",     "Stopień sprężania","Moc",            "Moc",          "Moc",         "Moment obrotowy",           "Przyspieszenie 0 - 100 km/h","Prędkość maksymalna","Zużycie paliwa - Cykl miejski", "Zużycie paliwa - Cykl pozamiejski", "Zużycie paliwa - Cykl mieszany",                "Ilość oleju w silniku",  "Specyfikacja oleju silnikowego", "null",                       "null",                        "null",                    "null",                   "null",                     "płyn chłodzący",          "Rozmiar opon","tech_data"]
+    # Definicja nagłówków
+    db_head = ["rok produkcji","paliwo","marka","model","Wersja","pojemność w cm³","Silnik:","Układ zasilania:","Średnica × skok tłoka:","St. sprężania:","MOC SILNIKA kM","MOC SILNIKA kW","przy obr/min","Maks. moment obrotowy w Nm","0-100 km/h:","V-max:","zużycie paliwa miasto","zużycie paliwa trasa","średnie zużycie paliwa","ilość oleju silnikowego","rodzaj oleju silnikowego","ilość oleju skrzynia biegów","rodzaj oleju skrzynia biegów","rodzaj płynu hamulcowego","ilość płynu hamulcowego","rodzaj płynu chłodniczego","ilość płynu chłodniczego","rozmiar kół","tech_data"]
+    match_head = ["Produkowany","Typ paliwa","Marka","Model","Generacja","Pojemność silnika","Modyfikacja (Silnik)","Układ wtrysku paliwa","Średnica cylindrów","Stopień sprężania","Moc","Moc","Moc","Moment obrotowy","Przyspieszenie 0 - 100 km/h","Prędkość maksymalna","Zużycie paliwa - Cykl miejski","Zużycie paliwa - Cykl pozamiejski","Zużycie paliwa - Cykl mieszany","Ilość oleju w silniku","Specyfikacja oleju silnikowego","null","null","null","null","null","płyn chłodzący","Rozmiar opon","tech_data"]
 
     transition_map = db_head.zip(match_head).to_h
+
+    # Utworzenie pliku CSV i zapisanie nagłówków
     CSV.open(file_name, 'w', col_sep: ";") do |csv|
       csv << db_head
+      config_url.each_with_index do |line, iter|
+        puts "#{iter} / #{config_url.length}"
+        begin
+          raise "Niepoprawny URL: #{line}" unless line =~ /^https?:\/\//
+          doc = Nokogiri::HTML(URI.open(line))
+        rescue => e
+          puts "Błąd podczas otwierania URL: #{e.message}"
+          next
+        end
 
-      @all_data.each do |row|
-        next if row.nil?
-        csv << db_head.map do |header|
-          local_key = transition_map[header]
-          #puts "header: #{header}, local_key: #{local_key}"
-          if local_key.nil? || local_key.downcase == "null" || row[local_key].nil?  ||  row[local_key] == ""
+        table = doc.xpath("/html/body/div[2]/table")
+        data_map = {}
+        data_map["Pełna nazwa"] = extract_car_name(line)
+
+        table.search('tr').each do |row|
+          next if row.css('.no, .no2').any?
+          th = row.at('th')
+          td = row.at('td')
+          next if th.nil? || td.nil?
+
+          key = th.text.gsub(/\s+/, ' ').strip
+          value = td.text.gsub(/\s+/, ' ').strip.gsub(";", " ")
+
+          if value == "Zaloguj się, aby zobaczyć."
+            value = ""
+          end
+
+          if ["Długość", "Szerokość", "Wysokość","Moment obrotowy", "Rozstaw osi","Szerokość ze rozłożonymi lusterkami","głębokość brodzenia", "Rozstaw kół przednich", "Rozstaw kół tylnych", "zwis przedni", "zwis tylny", "Układ silnika","Średnica cylindrów","Prześwit", "Szerokość ze złożonymi lusterkami","Minimalna średnica skrętu","Minimalna pojemność bagażnika","Zbiornik paliwa","Maksymalna pojemność bagażnika","Dopuszczalna masa ładunku na dachu","Masa własna","Maksymalne obciążenie","Dopuszczalna masa całkowita przyczepy bez hamulców","Dopuszczalna masa całkowita przyczepy z hamulcami przy ruszaniu na wzniesieniu o nachyleniu 12%","Zużycie paliwa - Cykl mieszany","Prędkość maksymalna","Moment obrotowy Silnik elektryczny","Ilość oleju w silniku","płyn chłodzący"].include?(key)
+            value = extract_first_known_value(value)
+          end
+
+          if ["Liczba miejsc"].include?(key)
+            value = value[/\d+/]
+          end
+
+          if ["Model/Kod silnika"].include?(key)
+            value = split_engine_model(value)
+          end
+
+          if ["Rozmiar opon"].include?(key)
+            data = split_tires(value)
+            value = data[0]
+            if data[1].nil?
+              data_map["Opony opcjonalne"] = ""
+            else
+              data_map["Opony opcjonalne"] = data[1]
+            end
+          end
+
+          if ["Rozmiar felg"].include?(key)
+            data = split_rims(value)
+            value = data[0]
+            if data[1].nil?
+              data_map["Felgi opcjonalne"] = ""
+            else
+              data_map["Felgi opcjonalne"] = data[1]
+            end
+          end
+
+          if ["Napęd"].include?(key)
+            if value == "Napęd na wszystkie koła (4x4)"
+              value = "4x4"
+            elsif value == "Napęd na tylne koła"
+              value = "na tylną oś"
+            elsif value == "Napęd na przednie koła"
+              value = "na przednią oś"
+            else
+              value = ""
+            end
+          end
+
+          if ["Średnie zużycie energii"].include?(key)
+            value = extract_kwh(value)
+          end
+
+          if ["Emisje CO2"].include?(key)
+            value = extract_co2(value)
+          end
+
+          if [
+            "Zużycie paliwa - Cykl miejski",
+            "Zużycie paliwa - Cykl pozamiejski",
+            "Zużycie paliwa - Cykl mieszany"
+          ].any? { |pattern| key.include?(pattern) }
+            key = extract_cycle_type(key)
+            value = value.to_s
+            value = value[/(\d+(?:\.\d+)?)/]
+          end
+
+          @all_heads << key if defined?(@all_heads)
+          data_map[key] = value
+        end
+
+        t_data_head = ["Długość","Szerokość","Wysokość","Rozstaw osi","Liczba drzwi","Liczba miejsc","Ilość biegów","Napęd","Rodzaj skrzyni","Rozmiar opon ","Rozmiar felg","Zbiornik paliwa","Masa własna","Minimalna pojemność bagażnika","Maksymalna pojemność bagażnika"]
+        data = "{"
+        t_data_head.each do |key|
+          if data_map["Ilość biegów i rodzaj skrzyni biegów"].nil?
+            data += "\"#{key}\": \"null\","
+          elsif key == "Ilość biegów"
+            data += "\"#{key}\": \"#{data_map["Ilość biegów i rodzaj skrzyni biegów"][/\d+/].to_i}\","
+          elsif key == "Rodzaj skrzyni"
+            data +=  "\"#{key}\": \"#{data_map["Ilość biegów i rodzaj skrzyni biegów"][/skrzynia biegów\s+(.*)/i,1]}\","
+          else
+            data += "\"#{key}\": \"#{data_map[key]}\","
+          end
+        end
+        data.chomp!(",")
+        data += "}"
+        data_map["tech_data"] = data
+
+        data_map["Link"] = line
+        data_map["Produkowany"] = get_date_of_production(data_map["Początek produkcji"],data_map["Koniec produkcji"])
+
+        # Zapisanie pojedynczego wiersza do CSV natychmiast
+        csv << build_csv_row(data_map, db_head, transition_map)
+        csv.flush  # Wymuszenie zapisu do pliku
+
+        #puts "Zapisano dane dla: #{line}"
+      end
+    end
+
+    puts "Plik CSV został zapisany jako: #{file_name}"
+  end
+
+  # Pomocnicza funkcja do budowania wiersza CSV
+  def build_csv_row(data_map, db_head, transition_map)
+    db_head.map do |header|
+      local_key = transition_map[header]
+
+      if local_key.nil? || local_key.downcase == "null" || data_map[local_key].nil? || data_map[local_key] == ""
+        ""
+      else
+        if data_map[local_key] == "Zaloguj się, aby zobaczyć."
+          ""
+        elsif header == "Silnik:"
+          if data_map["Pojemność silnika"].nil? || data_map["Liczba cylindrów"].nil? || data_map["Konfiguracja silnika"].nil?
             ""
           else
-            if row[local_key] == "Zaloguj się, aby zobaczyć."
-              row[local_key] == ""
-            end
-              if header == "Silnik:"
-                if row["Pojemność silnika"].nil? || row["Liczba cylindrów"].nil? || row["Konfiguracja silnika"].nil?
-                  return ""
-                end
-                liters = extract_first_known_value(row["Pojemność silnika"], with_unit: false) / 1000
-                liters = (liters * 10).ceil / 10.0
-                "#{ liters } L, ilość cylindrów: #{ row["Liczba cylindrów"] }, układ cylindrów: #{ row["Konfiguracja silnika"] }"
-              elsif header == "pojemność w cm³"
-                extract_first_known_value(row["Pojemność silnika"], with_unit: false).to_i
-              elsif header == "MOC SILNIKA kM"
-                if row["Moc"].nil?
-                  return ""
-                end
-                row["Moc"].match(/\d+/)
-              elsif header == "MOC SILNIKA kW"
-                if row["Moc"].nil?
-                  return ""
-                end
-                kW = row["Moc"][/\d+/].to_f
-                kW = (kW * 0.74).to_i
-                kW
-              elsif header == "przy obr/min"
-                if row["Moc"].nil?
-                  return ""
-                end
-                row["Moc"].match(/\s+\d+/).to_s
-              elsif header == "0-100 km/h:"
-                if row[local_key].nil?
-                  return ""
-                end
-                row[local_key][/(\d+(?:\.\d+)?)/]
-              else
-                row[local_key] || ""
-              end
+            liters = extract_first_known_value(data_map["Pojemność silnika"], with_unit: false) / 1000
+            liters = (liters * 10).ceil / 10.0
+            "#{ liters } L, ilość cylindrów: #{ data_map["Liczba cylindrów"] }, układ cylindrów: #{ data_map["Konfiguracja silnika"] }"
           end
+        elsif header == "pojemność w cm³"
+          extract_first_known_value(data_map["Pojemność silnika"], with_unit: false).to_i
+        elsif header == "MOC SILNIKA kM"
+          if data_map["Moc"].nil?
+            ""
+          else
+            data_map["Moc"].match(/\d+/)
+          end
+        elsif header == "MOC SILNIKA kW"
+          if data_map["Moc"].nil?
+            ""
+          else
+            kW = data_map["Moc"][/\d+/].to_f
+            kW = (kW * 0.74).to_i
+            kW
+          end
+        elsif header == "przy obr/min"
+          if data_map["Moc"].nil?
+            ""
+          else
+            data_map["Moc"].match(/\s+\d+/).to_s
+          end
+        elsif header == "0-100 km/h:"
+          if data_map[local_key].nil?
+            ""
+          else
+            data_map[local_key][/(\d+(?:\.\d+)?)/]
+          end
+        else
+          data_map[local_key] || ""
         end
       end
     end
   end
+
+
+
+  # def technical_data(config_url)
+  #   config_url.each do |line|
+  #     puts line
+  #     begin
+  #       raise "Niepoprawny URL: #{line}" unless line =~ /^https?:\/\//
+  #       doc = Nokogiri::HTML(URI.open(line))
+  #     rescue => e
+  #       puts "Błąd podczas otwierania URL: #{e.message}"
+  #       next
+  #     end
+  #     table = doc.xpath("/html/body/div[2]/table")
+  #     data_map = {}
+  #     data_map["Pełna nazwa"] = extract_car_name(line)
+  #     table.search('tr').each do |row|
+  #       next if row.css('.no, .no2').any?
+  #       th = row.at('th')
+  #       td = row.at('td')
+  #       next if th.nil? || td.nil?
+  #
+  #       key = th.text.gsub(/\s+/, ' ').strip
+  #       value = td.text.gsub(/\s+/, ' ').strip.gsub(";", " ")
+  #
+  #       if value == "Zaloguj się, aby zobaczyć."
+  #         value = ""
+  #       end
+  #
+  #       if ["Długość", "Szerokość", "Wysokość","Moment obrotowy", "Rozstaw osi","Szerokość ze rozłożonymi lusterkami","głębokość brodzenia", "Rozstaw kół przednich", "Rozstaw kół tylnych", "zwis przedni", "zwis tylny", "Układ silnika","Średnica cylindrów","Prześwit", "Szerokość ze złożonymi lusterkami","Minimalna średnica skrętu","Minimalna pojemność bagażnika","Zbiornik paliwa","Maksymalna pojemność bagażnika","Dopuszczalna masa ładunku na dachu","Masa własna","Maksymalne obciążenie","Dopuszczalna masa całkowita przyczepy bez hamulców","Dopuszczalna masa całkowita przyczepy z hamulcami przy ruszaniu na wzniesieniu o nachyleniu 12%","Zużycie paliwa - Cykl mieszany","Prędkość maksymalna","Moment obrotowy Silnik elektryczny","Ilość oleju w silniku","płyn chłodzący"].include?(key)
+  #         value = extract_first_known_value(value)
+  #       end
+  #
+  #       # if ["Moment obrotowy"].include?(key)
+  #       #   value = convert_nm_extra(value)
+  #       # end
+  #
+  #       if ["Liczba miejsc"].include?(key)
+  #         value = value[/\d+/]
+  #       end
+  #
+  #       if ["Model/Kod silnika"].include?(key)
+  #         value = split_engine_model(value)
+  #       end
+  #
+  #       if ["Rozmiar opon"].include?(key)
+  #         data = split_tires(value)
+  #         value = data[0]
+  #         if data[1].nil?
+  #           data_map["Opony opcjonalne"] = ""
+  #         else
+  #           data_map["Opony opcjonalne"] = data[1]
+  #         end
+  #       end
+  #
+  #       if ["Rozmiar felg"].include?(key)
+  #         data = split_rims(value)
+  #         value = data[0]
+  #         if data[1].nil?
+  #           data_map["Felgi opcjonalne"] = ""
+  #         else
+  #           data_map["Felgi opcjonalne"] = data[1]
+  #         end
+  #       end
+  #
+  #       if ["Napęd"].include?(key)
+  #         if value == "Napęd na wszystkie koła (4x4)"
+  #           value = "4x4"
+  #         elsif value == "Napęd na tylne koła"
+  #           value = "na tylną oś"
+  #         elsif value == "Napęd na przednie koła"
+  #           value = "na przednią oś"
+  #         else
+  #           value = ""
+  #         end
+  #       end
+  #
+  #       if ["Średnie zużycie energii"].include?(key)
+  #         value = extract_kwh(value)
+  #       end
+  #
+  #       if ["Emisje CO2"].include?(key)
+  #         value = extract_co2(value)
+  #       end
+  #
+  #       if [
+  #         "Zużycie paliwa - Cykl miejski",
+  #         "Zużycie paliwa - Cykl pozamiejski",
+  #         "Zużycie paliwa - Cykl mieszany"
+  #       ].any? { |pattern| key.include?(pattern) }
+  #         key = extract_cycle_type(key)
+  #         value = value.to_s
+  #         value = value[/(\d+(?:\.\d+)?)/]
+  #         #puts "#{key} : #{value}"
+  #       end
+  #
+  #       @all_heads << key
+  #       data_map[key] = value
+  #     end
+  #
+  #     t_data_head = ["Długość","Szerokość","Wysokość","Rozstaw osi","Liczba drzwi","Liczba miejsc","Ilość biegów","Napęd","Rodzaj skrzyni","Rozmiar opon ","Rozmiar felg","Zbiornik paliwa","Masa własna","Minimalna pojemność bagażnika","Maksymalna pojemność bagażnika"]
+  #     data="{"
+  #     t_data_head.each do |key|
+  #
+  #       if data_map["Ilość biegów i rodzaj skrzyni biegów"].nil?
+  #         data += "\"#{key}\": \"null\","
+  #       elsif key == "Ilość biegów"
+  #         data += "\"#{key}\": \"#{data_map["Ilość biegów i rodzaj skrzyni biegów"][/\d+/].to_i}\","
+  #       elsif key == "Rodzaj skrzyni"
+  #         data +=  "\"#{key}\": \"#{data_map["Ilość biegów i rodzaj skrzyni biegów"][/skrzynia biegów\s+(.*)/i,1]}\","
+  #       else
+  #         data += "\"#{key}\": \"#{data_map[key]}\","
+  #       end
+  #     end
+  #     data.chomp!(",")
+  #     data += "}"
+  #     data_map["tech_data"] = data
+  #     #puts data
+  #
+  #     data_map["Link"] = line
+  #     @all_heads << "Link"
+  #
+  #     data_map["Produkowany"] = get_date_of_production(data_map["Początek produkcji"],data_map["Koniec produkcji"])
+  #     @all_heads << "Produkowany"
+  #
+  #     @all_data << data_map
+  #   end
+  #   save_to_csv
+  # end
+  #
+  # def save_to_csv
+  #   file_name = "Report_#{DateTime.now.strftime('%Y%m%d_%H%M%S')}.csv"
+  #
+  #   db_head =     ["rok produkcji","paliwo",    "marka","model","Wersja",   "pojemność w cm³",  "Silnik:",              "Układ zasilania:",     "Średnica × skok tłoka:", "St. sprężania:",   "MOC SILNIKA kM","MOC SILNIKA kW","przy obr/min","Maks. moment obrotowy w Nm","0-100 km/h:",                "V-max:",             "zużycie paliwa miasto",        "zużycie paliwa trasa",     "średnie zużycie paliwa", "ilość oleju silnikowego","rodzaj oleju silnikowego",       "ilość oleju skrzynia biegów","rodzaj oleju skrzynia biegów","rodzaj płynu hamulcowego","ilość płynu hamulcowego","rodzaj płynu chłodniczego","ilość płynu chłodniczego","rozmiar kół","tech_data"]
+  #   match_head =  ["Produkowany",  "Typ paliwa","Marka","Model","Generacja","Pojemność silnika","Modyfikacja (Silnik)", "Układ wtrysku paliwa", "Średnica cylindrów",     "Stopień sprężania","Moc",            "Moc",          "Moc",         "Moment obrotowy",           "Przyspieszenie 0 - 100 km/h","Prędkość maksymalna","Zużycie paliwa - Cykl miejski", "Zużycie paliwa - Cykl pozamiejski", "Zużycie paliwa - Cykl mieszany",                "Ilość oleju w silniku",  "Specyfikacja oleju silnikowego", "null",                       "null",                        "null",                    "null",                   "null",                     "płyn chłodzący",          "Rozmiar opon","tech_data"]
+  #
+  #   transition_map = db_head.zip(match_head).to_h
+  #   CSV.open(file_name, 'w', col_sep: ";") do |csv|
+  #     csv << db_head
+  #
+  #     @all_data.each do |row|
+  #       next if row.nil?
+  #       csv << db_head.map do |header|
+  #         local_key = transition_map[header]
+  #         #puts "header: #{header}, local_key: #{local_key}"
+  #         if local_key.nil? || local_key.downcase == "null" || row[local_key].nil?  ||  row[local_key] == ""
+  #           ""
+  #         else
+  #           if row[local_key] == "Zaloguj się, aby zobaczyć."
+  #             row[local_key] == ""
+  #           end
+  #             if header == "Silnik:"
+  #               if row["Pojemność silnika"].nil? || row["Liczba cylindrów"].nil? || row["Konfiguracja silnika"].nil?
+  #                 return ""
+  #               end
+  #               liters = extract_first_known_value(row["Pojemność silnika"], with_unit: false) / 1000
+  #               liters = (liters * 10).ceil / 10.0
+  #               "#{ liters } L, ilość cylindrów: #{ row["Liczba cylindrów"] }, układ cylindrów: #{ row["Konfiguracja silnika"] }"
+  #             elsif header == "pojemność w cm³"
+  #               extract_first_known_value(row["Pojemność silnika"], with_unit: false).to_i
+  #             elsif header == "MOC SILNIKA kM"
+  #               if row["Moc"].nil?
+  #                 return ""
+  #               end
+  #               row["Moc"].match(/\d+/)
+  #             elsif header == "MOC SILNIKA kW"
+  #               if row["Moc"].nil?
+  #                 return ""
+  #               end
+  #               kW = row["Moc"][/\d+/].to_f
+  #               kW = (kW * 0.74).to_i
+  #               kW
+  #             elsif header == "przy obr/min"
+  #               if row["Moc"].nil?
+  #                 return ""
+  #               end
+  #               row["Moc"].match(/\s+\d+/).to_s
+  #             elsif header == "0-100 km/h:"
+  #               if row[local_key].nil?
+  #                 return ""
+  #               end
+  #               row[local_key][/(\d+(?:\.\d+)?)/]
+  #             else
+  #               row[local_key] || ""
+  #             end
+  #         end
+  #       end
+  #     end
+  #   end
+  # end
 end
